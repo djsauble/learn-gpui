@@ -46,14 +46,16 @@ We will build it step-by-step, starting with the absolute minimum and adding fea
 First, create a new binary Rust project using Cargo:
 
 ```sh
-cargo new hello_gpui
-cd hello_gpui
+cargo new chapter_01
+cd chapter_01
 ```
 
 ### Add the GPUI Dependency
 
 GPUI is not yet published on `crates.io`. 
 To use it, you need to add the Zed repository as a dependency in your `Cargo.toml` file.
+
+
 
 Open `Cargo.toml` and add the following under the `[dependencies]` section:
 
@@ -236,5 +238,5 @@ You've taken the first and most important step on your journey to mastering GPUI
 
 ## What's Next?
 
-In **Chapter 2: Understanding the Architecture**, we will take a closer look at the core concepts of GPUI. 
+In [Chapter 2: Understanding the Architecture](./CHAPTER_02.md), we will take a closer look at the core concepts of GPUI. 
 We'll explore the rendering pipeline, contexts, and views to build a deeper understanding of how the framework operates.

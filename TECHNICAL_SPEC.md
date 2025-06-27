@@ -29,7 +29,7 @@ learn-gpui/
 - Concept explanations with diagrams (Mermaid.js)
 
 ## Hands-On Exercise
-- Step-by-step guided project, with code examples that gradually add complexity.
+- Guided project, with code examples that progressively add complexity.
 
 ## Challenge Problems
 - Independent practice opportunities
@@ -56,36 +56,30 @@ I've also cloned the GPUI code into this project, if that's easier: `src/crates/
 // 6. Have minimal dependencies (except for GPUI)
 // 7. Be as simple as possible to illustrate the concept, but no simpler
 
-use gpui::*;
+use gpui::{
+    App, AppContext, Application, Context, IntoElement, Render, Window, WindowOptions, div,
+};
 
-/// A simple counter component demonstrating state management
-struct Counter {
-    count: i32,
-}
+// Our view doesn't have any data yet
+struct HelloWorld {}
 
-impl Counter {
-    fn new() -> Self {
-        Self { count: 0 }
-    }
-
-    fn increment(&mut self) {
-        self.count += 1;
-    }
-}
-
-impl Render for Counter {
-    fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
+impl Render for HelloWorld {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         div()
-            .flex()
-            .items_center()
-            .gap_4()
-            .child(format!("Count: {}", self.count))
-            .child(
-                button("Increment")
-                    .on_click(cx.listener(|counter, _event, _cx| {
-                        counter.increment();
-                    }))
-            )
     }
+}
+
+fn main() {
+    // The Application singleton is the entry point to a GPUI app.
+    Application::new().run(|cx: &mut App| {
+        cx.open_window(
+            WindowOptions::default(),
+            // The view constructor callback creates an instance of our empty HelloWorld view.
+            |_, cx| cx.new(|_| HelloWorld {}),
+        )
+        .unwrap();
+        // Activate the app, making the window visible and focused.
+        cx.activate(true);
+    });
 }
 ```

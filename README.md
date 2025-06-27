@@ -1,4 +1,4 @@
-# The GPUI Book: A Comprehensive Learning Plan
+# The GPUI Book
 
 A progressive, hands-on guide to mastering [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) - the fast, productive UI framework for Rust from the creators of Zed.
 
@@ -10,14 +10,14 @@ A progressive, hands-on guide to mastering [GPUI](https://github.com/zed-industr
 
 ## Book Structure
 
-### Chapter 1: Getting Started
+### [Chapter 1: Getting Started](./book/CHAPTER_01.md)
 - What is GPUI and why use it?
 - Installation and setup (macOS, Linux)
 - Development environment setup
 - Your first GPUI application
 - **Project**: "Hello, world!" - Basic window with text
 
-### Chapter 2: Understanding the Architecture
+### [Chapter 2: Understanding the Architecture](./book/CHAPTER_02.md)
 - App, Contexts, and Views explained
 - The rendering pipeline
 - Immediate vs retained mode concepts
