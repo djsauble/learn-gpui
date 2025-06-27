@@ -82,11 +82,17 @@ To see the `AppContext` in action, let's create an application with two windows.
 
 ### Project Setup
 
-Create a copy of the `chapter_01` project from Chapter 1.
+Create a new cargo project.
 
 ```sh
 cargo new chapter_02
-cp chapter_{01,02}/src/main.rs
+cd chapter_02
+```
+
+Install GPUI as a dependency.
+
+```
+cargo add gpui --git https://github.com/zed-industries/zed.git
 ```
 
 ### Open Two Windows

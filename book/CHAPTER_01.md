@@ -55,6 +55,8 @@ cd chapter_01
 GPUI is not yet published on `crates.io`. 
 To use it, you need to add the Zed repository as a dependency in your `Cargo.toml` file.
 
+
+
 Open `Cargo.toml` and add the following under the `[dependencies]` section:
 
 ```toml
