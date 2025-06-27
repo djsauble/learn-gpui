@@ -49,10 +49,8 @@ Open `Cargo.toml` and add the following under the `[dependencies]` section:
 
 ```toml
 [dependencies]
-gpui = { git = "https://github.com/zed-industries/zed.git", features = ["macros"] }
+gpui = { git = "https://github.com/zed-industries/zed.git" }
 ```
-
-The `macros` feature enables helpful macros that simplify the development process.
 
 ### System Dependencies
 
@@ -69,7 +67,7 @@ xcode-select --install
 Let's start by creating the most minimal GPUI application possible. Replace the contents of `src/main.rs` with the following:
 
 ```rust
-use gpui::*;
+use gpui::App;
 
 // The `main` function is the entry point of our application.
 fn main() {
