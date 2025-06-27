@@ -64,14 +64,27 @@ xcode-select --install
 
 ### The Simplest Runnable App
 
-Let's start by creating the most minimal GPUI application possible. This will just open a blank window.
+Let's start by creating the most minimal GPUI application possible. This will open a blank window containing an empty view.
 
 Replace the contents of `src/main.rs` with the following:
 
 ```rust
 use gpui::{
-    App, Application, Bounds, WindowBounds, WindowOptions, px, size,
+    div, App, Application, Bounds, Context, IntoElement, Render, Window, WindowBounds,
+    WindowOptions, px, size,
 };
+
+// Define a struct for our view. It doesn't need any data yet.
+struct HelloWorld {}
+
+// Implement the `Render` trait for our view. The `render` method is
+// called by the framework whenever the UI needs to be redrawn.
+impl Render for HelloWorld {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
+        // The `div` element is a basic container. For now, it's empty.
+        div()
+    }
+}
 
 fn main() {
     // The Application singleton is the entry point to a GPUI app.
@@ -83,8 +96,8 @@ fn main() {
                 window_bounds: Some(WindowBounds::Windowed(bounds)),
                 ..Default::default()
             },
-            // The view constructor callback is required, but for now it does nothing.
-            |_, _| {},
+            // The view constructor callback creates an instance of our HelloWorld view.
+            |_, cx| cx.new(|_| HelloWorld {}),
         )
         .unwrap();
         // Activate the app, making the window visible and focused.
@@ -97,7 +110,7 @@ Run the application with `cargo run`. You should see a 500x500 pixel blank windo
 
 ### Creating a View
 
-In GPUI, `Views` are the core components that hold state and render UI. Let's create one to render our content.
+In GPUI, `Views` are the core components that hold state and render UI. We have already created a minimal one. Now, let's make it hold some data and render it.
 
 Update `src/main.rs`:
 ```rust
@@ -106,7 +119,7 @@ use gpui::{
     WindowBounds, WindowOptions, px, size,
 };
 
-// Define a struct for our view.
+// Add a `text` field to our view's struct.
 struct HelloWorld {
     text: SharedString,
 }
@@ -115,8 +128,7 @@ struct HelloWorld {
 // called by the framework whenever the UI needs to be redrawn.
 impl Render for HelloWorld {
     fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
-        // The `div` element is a basic container, similar to `<div>` in HTML.
-        // For now, it just contains our text.
+        // Render the text within the div.
         div().child(self.text.clone())
     }
 }
@@ -129,7 +141,7 @@ fn main() {
                 window_bounds: Some(WindowBounds::Windowed(bounds)),
                 ..Default::default()
             },
-            // In the view constructor, we create a new instance of our view.
+            // In the view constructor, we initialize our view with some text.
             |_, cx| {
                 cx.new(|_| HelloWorld {
                     text: "Hello, world!".into(),
@@ -141,6 +153,7 @@ fn main() {
     });
 }
 ```
+
 Run this now. You'll see "Hello, world!" in the top-left corner of the window. Our code is now structured with a `View` that renders our UI.
 
 ### Styling and Centering
@@ -154,7 +167,14 @@ use gpui::{
     div, rgb, App, Application, Bounds, Context, IntoElement, ParentElement, Render,
     SharedString, Styled, Window, WindowBounds, WindowOptions, px, size,
 };
-// ... existing code ...
+
+// Add a `text` field to our view's struct.
+struct HelloWorld {
+    text: SharedString,
+}
+
+// Implement the `Render` trait for our view. The `render` method is
+// called by the framework whenever the UI needs to be redrawn.
 impl Render for HelloWorld {
     fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         div()
@@ -173,7 +193,6 @@ impl Render for HelloWorld {
     }
 }
 
-// ... The main function remains the same ...
 fn main() {
     Application::new().run(|cx: &mut App| {
         let bounds = Bounds::centered(None, size(px(500.), px(500.0)), cx);
