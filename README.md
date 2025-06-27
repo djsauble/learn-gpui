@@ -24,7 +24,7 @@ A progressive, hands-on guide to mastering [GPUI](https://github.com/zed-industr
 - Element tree and layout system
 - **Project**: "Multiple Views" - App with multiple windows
 
-### Chapter 3: Basic Elements and Styling
+### [Chapter 3: Basic Elements and Styling](./book/CHAPTER_03.md)
 - Core elements: `div`, `text`, `img`, `svg`
 - Styling system (flexbox, colors, fonts)
 - Layout fundamentals
