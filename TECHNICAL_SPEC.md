@@ -42,9 +42,9 @@ learn-gpui/
 
 IMPORTANT: DO NOT MAKE THINGS UP, ALWAYS LOAD THE ZED SOURCE CODE INTO CONTEXT
 
-You can reference the GPUI source code and examples at: https://github.com/zed-industries/zed/tree/main/crates/gpui
+You can reference the GPUI source code and examples at: `https://github.com/zed-industries/zed/tree/main/crates/gpui`
 
-I've also cloned the GPUI repository locally, if that's easier: /Users/djsauble/Code/zed/crates/gpui
+I've also cloned the GPUI code into this project, if that's easier: `src/crates/gpui/`
 
 ## Code Example Standards
 ```rust
