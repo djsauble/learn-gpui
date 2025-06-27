@@ -1,4 +1,4 @@
-# The GPUI Book: A Comprehensive Learning Plan
+# The GPUI Book
 
 A progressive, hands-on guide to mastering [GPUI](https://github.com/zed-industries/zed/tree/main/crates/gpui) - the fast, productive UI framework for Rust from the creators of Zed.
 
