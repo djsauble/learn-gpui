@@ -2,6 +2,8 @@
 
 A progressive, hands-on guide to mastering GPUI - the fast, productive UI framework for Rust from the creators of Zed.
 
+https://github.com/zed-industries/zed/tree/main/crates/gpui
+
 ## Overview
 
 This book website will teach GPUI through practical examples, building from simple concepts to complex applications. Modeled after the successful Rust Book approach, each chapter includes theory, code examples, and exercises.

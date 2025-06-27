@@ -38,6 +38,14 @@ learn-gpui/
 - Key takeaways and next steps
 ```
 
+## Source documentation
+
+IMPORTANT: DO NOT MAKE THINGS UP, ALWAYS LOAD THE ZED SOURCE CODE INTO CONTEXT
+
+You can reference the GPUI source code and examples at: https://github.com/zed-industries/zed/tree/main/crates/gpui
+
+I've also cloned the GPUI repository locally, if that's easier: /Users/djsauble/Code/zed/crates/gpui
+
 ## Code Example Standards
 ```rust
 // All examples must:
