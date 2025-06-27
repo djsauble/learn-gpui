@@ -82,7 +82,12 @@ To see the `AppContext` in action, let's create an application with two windows.
 
 ### Project Setup
 
-You can continue with the `hello_gpui` project from Chapter 1.
+Create a copy of the `chapter_01` project from Chapter 1.
+
+```sh
+cargo new chapter_02
+cp chapter_{01,02}/src/main.rs
+```
 
 ### Open Two Windows
 

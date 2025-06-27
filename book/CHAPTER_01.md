@@ -46,8 +46,8 @@ We will build it step-by-step, starting with the absolute minimum and adding fea
 First, create a new binary Rust project using Cargo:
 
 ```sh
-cargo new hello_gpui
-cd hello_gpui
+cargo new chapter_01
+cd chapter_01
 ```
 
 ### Add the GPUI Dependency
