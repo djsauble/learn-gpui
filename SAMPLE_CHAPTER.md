@@ -381,7 +381,7 @@ impl Render for ResponsiveCard {
 
 Let's build a complete user profile card component that demonstrates all the concepts we've learned.
 
-### Step 1: Basic Structure
+### Basic Structure
 
 Create a new file `src/profile_card.rs`:
 
@@ -426,7 +426,7 @@ impl Render for ProfileCard {
 }
 ```
 
-### Step 2: Header with Avatar
+### Header with Avatar
 
 ```rust
 impl ProfileCard {
@@ -485,7 +485,7 @@ impl ProfileCard {
 }
 ```
 
-### Step 3: Information Section
+### Information Section
 
 ```rust
 impl ProfileCard {
@@ -554,7 +554,7 @@ impl ProfileCard {
 }
 ```
 
-### Step 4: Action Buttons
+### Action Buttons
 
 ```rust
 impl ProfileCard {
@@ -590,7 +590,7 @@ impl ProfileCard {
 }
 ```
 
-### Step 5: Using the Profile Card
+### Using the Profile Card
 
 In your `main.rs`:
 
@@ -633,16 +633,16 @@ fn main() {
 
 ## Challenge Problems
 
-### Challenge 1: Theme Variants
+### Theme Variants
 Modify the ProfileCard to support light and dark themes. Add a `theme` parameter that changes the color scheme.
 
-### Challenge 2: Responsive Layout
+### Responsive Layout
 Make the ProfileCard responsive so it stacks elements vertically on narrow screens and horizontally on wide screens.
 
-### Challenge 3: Interactive States
+### Interactive States
 Add hover and focus states to the action buttons, and implement click handlers that show different button text when activated.
 
-### Challenge 4: Custom Avatar Fallback
+### Custom Avatar Fallback
 When an avatar image fails to load, show a generated avatar with the user's initials instead.
 
 ## Summary

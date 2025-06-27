@@ -32,7 +32,7 @@ At its core, GPUI aims to combine the performance of immediate-mode rendering wi
 
 Let's dive in and build a classic "Hello, World!" style application. We'll call it "Hello, GPUI!". We will build it step-by-step, starting with the absolute minimum and adding features progressively.
 
-### Step 1: Project Setup
+### Project Setup
 
 First, create a new binary Rust project using Cargo:
 
@@ -41,7 +41,7 @@ cargo new hello_gpui
 cd hello_gpui
 ```
 
-### Step 2: Add the GPUI Dependency
+### Add the GPUI Dependency
 
 GPUI is not yet published on `crates.io`. To use it, you need to add the Zed repository as a dependency in your `Cargo.toml` file.
 
@@ -54,7 +54,7 @@ gpui = { git = "https://github.com/zed-industries/zed.git", features = ["macros"
 
 The `macros` feature enables helpful macros that simplify the development process.
 
-### Step 3: System Dependencies
+### System Dependencies
 
 GPUI has some system dependencies that you need to install.
 
@@ -70,7 +70,7 @@ You'll need to install a few development libraries for X11 and ALSA:
 sudo apt-get install -y libx11-dev libxkbcommon-dev libx11-xcb-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libasound2-dev
 ```
 
-### Step 4: The Simplest Runnable App
+### The Simplest Runnable App
 
 Let's start by creating the most minimal GPUI application possible. Replace the contents of `src/main.rs` with the following:
 
@@ -91,7 +91,7 @@ fn main() {
 
 Run the application with `cargo run`. You should see a blank window appear. This is the foundation of every GPUI app.
 
-### Step 5: Creating a View
+### Creating a View
 
 In GPUI, `Views` are the core components that hold state and render UI. Let's create one.
 
@@ -124,7 +124,7 @@ fn main() {
 ```
 Run this now. The window will look the same, but our code is now structured with a `View` that will render our UI.
 
-### Step 6: Adding Text
+### Adding Text
 
 Let's make our view render some text.
 
@@ -143,7 +143,7 @@ impl Render for HelloWorld {
 ```
 Run the app again. You'll see "Hello, GPUI!" in the top-left corner of the window.
 
-### Step 7: Styling and Centering
+### Styling and Centering
 
 The text is a bit lonely in the corner. Let's center it and give it a color. GPUI uses a fluent, method-chaining style for styling that is inspired by Tailwind CSS.
 
@@ -169,7 +169,7 @@ impl Render for HelloWorld {
 ```
 Now when you run the app, the text will be perfectly centered and colored white, standing out against the default dark background.
 
-### Step 8: Adding an Asset
+### Adding an Asset
 
 GPUI applications need an `assets` directory in the project root for static files like images, fonts, and icons. Let's add the Zed logo next to our text.
 
@@ -221,7 +221,7 @@ fn main() {
 }
 ```
 
-### Step 9: Run the Final Application
+### Run the Final Application
 
 You're all set! Compile and run your application from the project root:
 
