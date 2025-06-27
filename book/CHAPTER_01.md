@@ -105,9 +105,10 @@ In GPUI, `Views` are the core components that hold state and render UI. We have 
 
 Update `src/main.rs`:
 ```rust
+// Add imports for ParentElement, SharedString, Styled, rgb
 use gpui::{
-    App, AppContext, Application, Context, IntoElement, Render, SharedString, Window,
-    WindowOptions, div,
+    App, AppContext, Application, Context, IntoElement, ParentElement, Render, SharedString,
+    Styled, Window, WindowOptions, div, rgb,
 };
 
 // Add a `text` field to our view's struct.
@@ -120,7 +121,9 @@ struct HelloWorld {
 impl Render for HelloWorld {
     fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         // Render the text within the div.
-        div().child(self.text.clone())
+        div()
+            .text_color(rgb(0xffffff))
+            .child(self.text.clone())
     }
 }
 
@@ -149,19 +152,15 @@ The text is a bit lonely in the corner. Let's center it and give it some style. 
 
 Modify the `render` method in `src/main.rs`:
 ```rust
-// ... existing code ...
 use gpui::{
     App, AppContext, Application, Context, IntoElement, ParentElement, Render,
     SharedString, Styled, Window, WindowOptions, div, rgb,
 };
 
-// Add a `text` field to our view's struct.
 struct HelloWorld {
     text: SharedString,
 }
 
-// Implement the `Render` trait for our view. The `render` method is
-// called by the framework whenever the UI needs to be redrawn.
 impl Render for HelloWorld {
     fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         div()
@@ -173,10 +172,11 @@ impl Render for HelloWorld {
             // Center children horizontally and vertically.
             .justify_center()
             .items_center()
+            // Add a subtle gray background
+            .bg(rgb(0x2a2a2a))
             // Apply text styling.
-            .text_xl()
-            .text_color(rgb(0xffffff))
-            // Add the text as a child element.
+            .text_3xl()
+            .text_color(rgb(0xffff00))
             .child(self.text.clone())
     }
 }
@@ -196,57 +196,7 @@ fn main() {
     });
 }
 ```
-Now when you run the app, the text will be perfectly centered, larger, and colored white, standing out against the default dark background.
-
-### Run the Final Application
-
-You're all set! The final code in `src/main.rs` should look like this:
-
-```rust
-use gpui::{
-    App, AppContext, Application, Context, IntoElement, ParentElement, Render,
-    SharedString, Styled, Window, WindowOptions, div, rgb,
-};
-
-struct HelloWorld {
-    text: SharedString,
-}
-
-impl Render for HelloWorld {
-    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
-        div()
-            .flex()
-            .w_full()
-            .h_full()
-            .justify_center()
-            .items_center()
-            .text_xl()
-            .text_color(rgb(0xffffff))
-            .child(self.text.clone())
-    }
-}
-
-fn main() {
-    Application::new().run(|cx: &mut App| {
-        cx.open_window(
-            WindowOptions::default(),
-            |_, cx| {
-                cx.new(|_| HelloWorld {
-                    text: "Hello, world!".into(),
-                })
-            },
-        )
-        .unwrap();
-        cx.activate(true);
-    });
-}
-```
-
-Compile and run your application from the project root:
-
-```sh
-cargo run
-```
+Now when you run the app, the text will be perfectly centered, larger, and colored yellow, standing out against a dark gray background.
 
 Congratulations! You've successfully built and run your first GPUI application, starting from a blank window and progressively adding components and styling.
 
