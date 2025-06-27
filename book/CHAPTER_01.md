@@ -64,12 +64,6 @@ Ensure you have the Xcode command-line tools installed. If you don't, you can in
 xcode-select --install
 ```
 
-**Linux (Debian/Ubuntu)**:
-You'll need to install a few development libraries for X11 and ALSA:
-```sh
-sudo apt-get install -y libx11-dev libxkbcommon-dev libx11-xcb-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libasound2-dev
-```
-
 ### The Simplest Runnable App
 
 Let's start by creating the most minimal GPUI application possible. Replace the contents of `src/main.rs` with the following:
