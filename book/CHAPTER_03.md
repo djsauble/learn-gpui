@@ -10,7 +10,6 @@
 ## Prerequisites
 - You have completed Chapter 1 and have a basic "Hello, World!" GPUI application running.
 - You are familiar with the concepts from Chapter 2, including `App`, `Window`, `View`, and the `Render` trait.
-- A working Rust and GPUI development environment is set up.
 
 ## Theory Section
 
@@ -64,10 +63,27 @@ GPUI uses a flexbox-like model for layout, which should be familiar to web devel
 
 Let's apply these concepts to build a styled "Profile Card" component. This exercise will combine layout, styling, text, and images.
 
+### Project Setup
+
+Create a new cargo project.
+
+```sh
+cargo new chapter_03
+cd chapter_03
+```
+
+Install GPUI as a dependency.
+
+```
+cargo add gpui --git https://github.com/zed-industries/zed.git
+```
+
+### Create the Profile Card Component
+
 First, ensure you have an image asset available. You can use the `app-icon.png` from the GPUI examples located at `src/crates/gpui/examples/image/app-icon.png`. For this example, we'll assume you've copied it to an `assets` directory in your project's root.
 
 ```
-my-gpui-app/
+chapter_03/
 ├── assets/
 │   └── app-icon.png
 ├── src/

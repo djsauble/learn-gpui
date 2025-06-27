@@ -95,7 +95,7 @@ Install GPUI as a dependency.
 cargo add gpui --git https://github.com/zed-industries/zed.git
 ```
 
-### Open Two Windows
+### Open a Window With Defaults
 
 We will modify the `main` function to call `cx.open_window` twice. Each window will be created with its own instance of the `HelloWorld` view, but we'll pass different text to each one.
 
@@ -141,6 +141,8 @@ fn main() {
     });
 }
 ```
+
+### Customize Window Options
 
 Next, we'll customize the window's appearance. We'll add a helper function to create a `WindowOptions` struct, allowing us to set the window's title and position. This step prepares our code for managing multiple windows with distinct properties.
 
@@ -202,6 +204,8 @@ fn main() {
     });
 }
 ```
+
+### Open a Second Window
 
 Finally, let's add a second window. We'll call our `get_window_options` helper again with a different position and title, and then use `cx.open_window` a second time. This demonstrates how to manage multiple windows in a single GPUI application.
 
