@@ -70,18 +70,14 @@ Replace the contents of `src/main.rs` with the following:
 
 ```rust
 use gpui::{
-    div, App, Application, Bounds, Context, IntoElement, Render, Window, WindowBounds,
-    WindowOptions, px, size,
+    App, AppContext, Application, Context, IntoElement, Render, Window, WindowOptions, div,
 };
 
-// Define a struct for our view. It doesn't need any data yet.
+// Our view doesn't have any data yet
 struct HelloWorld {}
 
-// Implement the `Render` trait for our view. The `render` method is
-// called by the framework whenever the UI needs to be redrawn.
 impl Render for HelloWorld {
     fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
-        // The `div` element is a basic container. For now, it's empty.
         div()
     }
 }
@@ -89,14 +85,9 @@ impl Render for HelloWorld {
 fn main() {
     // The Application singleton is the entry point to a GPUI app.
     Application::new().run(|cx: &mut App| {
-        // Define the initial window options.
-        let bounds = Bounds::centered(None, size(px(500.), px(500.)), cx);
         cx.open_window(
-            WindowOptions {
-                window_bounds: Some(WindowBounds::Windowed(bounds)),
-                ..Default::default()
-            },
-            // The view constructor callback creates an instance of our HelloWorld view.
+            WindowOptions::default(),
+            // The view constructor callback creates an instance of our empty HelloWorld view.
             |_, cx| cx.new(|_| HelloWorld {}),
         )
         .unwrap();
@@ -106,7 +97,7 @@ fn main() {
 }
 ```
 
-Run the application with `cargo run`. You should see a 500x500 pixel blank window appear. This is the foundation of every GPUI app.
+Run the application with `cargo run`. You should see a window appear with default dimensions. This is the foundation of every GPUI app.
 
 ### Creating a View
 
@@ -115,8 +106,8 @@ In GPUI, `Views` are the core components that hold state and render UI. We have 
 Update `src/main.rs`:
 ```rust
 use gpui::{
-    div, App, Application, Bounds, Context, IntoElement, Render, SharedString, Window,
-    WindowBounds, WindowOptions, px, size,
+    App, AppContext, Application, Context, IntoElement, Render, SharedString, Window,
+    WindowOptions, div,
 };
 
 // Add a `text` field to our view's struct.
@@ -135,12 +126,8 @@ impl Render for HelloWorld {
 
 fn main() {
     Application::new().run(|cx: &mut App| {
-        let bounds = Bounds::centered(None, size(px(500.), px(500.)), cx);
         cx.open_window(
-            WindowOptions {
-                window_bounds: Some(WindowBounds::Windowed(bounds)),
-                ..Default::default()
-            },
+            WindowOptions::default(),
             // In the view constructor, we initialize our view with some text.
             |_, cx| {
                 cx.new(|_| HelloWorld {
@@ -164,8 +151,8 @@ Modify the `render` method in `src/main.rs`:
 ```rust
 // ... existing code ...
 use gpui::{
-    div, rgb, App, Application, Bounds, Context, IntoElement, ParentElement, Render,
-    SharedString, Styled, Window, WindowBounds, WindowOptions, px, size,
+    App, AppContext, Application, Context, IntoElement, ParentElement, Render,
+    SharedString, Styled, Window, WindowOptions, div, rgb,
 };
 
 // Add a `text` field to our view's struct.
@@ -180,8 +167,9 @@ impl Render for HelloWorld {
         div()
             // Use flexbox to control layout.
             .flex()
-            // Set a fixed size for the div.
-            .size(px(500.0))
+            // Fill the available space.
+            .w_full()
+            .h_full()
             // Center children horizontally and vertically.
             .justify_center()
             .items_center()
@@ -195,12 +183,8 @@ impl Render for HelloWorld {
 
 fn main() {
     Application::new().run(|cx: &mut App| {
-        let bounds = Bounds::centered(None, size(px(500.), px(500.0)), cx);
         cx.open_window(
-            WindowOptions {
-                window_bounds: Some(WindowBounds::Windowed(bounds)),
-                ..Default::default()
-            },
+            WindowOptions::default(),
             |_, cx| {
                 cx.new(|_| HelloWorld {
                     text: "Hello, world!".into(),
@@ -220,8 +204,8 @@ You're all set! The final code in `src/main.rs` should look like this:
 
 ```rust
 use gpui::{
-    div, rgb, App, Application, Bounds, Context, IntoElement, ParentElement, Render,
-    SharedString, Styled, Window, WindowBounds, WindowOptions, px, size,
+    App, AppContext, Application, Context, IntoElement, ParentElement, Render,
+    SharedString, Styled, Window, WindowOptions, div, rgb,
 };
 
 struct HelloWorld {
@@ -232,7 +216,8 @@ impl Render for HelloWorld {
     fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         div()
             .flex()
-            .size(px(500.0))
+            .w_full()
+            .h_full()
             .justify_center()
             .items_center()
             .text_xl()
@@ -243,12 +228,8 @@ impl Render for HelloWorld {
 
 fn main() {
     Application::new().run(|cx: &mut App| {
-        let bounds = Bounds::centered(None, size(px(500.), px(500.0)), cx);
         cx.open_window(
-            WindowOptions {
-                window_bounds: Some(WindowBounds::Windowed(bounds)),
-                ..Default::default()
-            },
+            WindowOptions::default(),
             |_, cx| {
                 cx.new(|_| HelloWorld {
                     text: "Hello, world!".into(),
