@@ -64,164 +64,189 @@ xcode-select --install
 
 ### The Simplest Runnable App
 
-Let's start by creating the most minimal GPUI application possible. Replace the contents of `src/main.rs` with the following:
+Let's start by creating the most minimal GPUI application possible. This will just open a blank window.
+
+Replace the contents of `src/main.rs` with the following:
 
 ```rust
-use gpui::App;
+use gpui::{
+    App, Application, Bounds, WindowBounds, WindowOptions, px, size,
+};
 
-// The `main` function is the entry point of our application.
 fn main() {
-    // `App::new()` creates a new application instance.
-    App::new().run(|cx: &mut AppContext| {
-        // `cx.open_window` opens a new window. We provide default options
-        // and a closure that builds the view for the window.
-        // For now, the view is empty.
-        cx.open_window(WindowOptions::default(), |_| {});
+    // The Application singleton is the entry point to a GPUI app.
+    Application::new().run(|cx: &mut App| {
+        // Define the initial window options.
+        let bounds = Bounds::centered(None, size(px(500.), px(500.)), cx);
+        cx.open_window(
+            WindowOptions {
+                window_bounds: Some(WindowBounds::Windowed(bounds)),
+                ..Default::default()
+            },
+            // The view constructor callback is required, but for now it does nothing.
+            |_, _| {},
+        )
+        .unwrap();
+        // Activate the app, making the window visible and focused.
+        cx.activate(true);
     });
 }
 ```
 
-Run the application with `cargo run`. You should see a blank window appear. This is the foundation of every GPUI app.
+Run the application with `cargo run`. You should see a 500x500 pixel blank window appear. This is the foundation of every GPUI app.
 
 ### Creating a View
 
-In GPUI, `Views` are the core components that hold state and render UI. Let's create one.
+In GPUI, `Views` are the core components that hold state and render UI. Let's create one to render our content.
 
 Update `src/main.rs`:
 ```rust
-use gpui::*;
+use gpui::{
+    div, App, Application, Bounds, Context, IntoElement, Render, SharedString, Window,
+    WindowBounds, WindowOptions, px, size,
+};
 
-// Define a struct for our view. It doesn't need any data yet.
-struct HelloWorld;
+// Define a struct for our view.
+struct HelloWorld {
+    text: SharedString,
+}
 
 // Implement the `Render` trait for our view. The `render` method is
 // called by the framework whenever the UI needs to be redrawn.
 impl Render for HelloWorld {
-    fn render(&mut self, _cx: &mut ViewContext<Self>) -> impl IntoElement {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         // The `div` element is a basic container, similar to `<div>` in HTML.
-        // For now, it's empty.
-        div()
+        // For now, it just contains our text.
+        div().child(self.text.clone())
     }
 }
 
 fn main() {
-    App::new().run(|cx: &mut AppContext| {
-        cx.open_window(WindowOptions::default(), |cx| {
-            // `cx.new_view` creates an instance of our `HelloWorld` view
-            // and places it in the window.
-            cx.new_view(|_cx| HelloWorld)
-        });
+    Application::new().run(|cx: &mut App| {
+        let bounds = Bounds::centered(None, size(px(500.), px(500.)), cx);
+        cx.open_window(
+            WindowOptions {
+                window_bounds: Some(WindowBounds::Windowed(bounds)),
+                ..Default::default()
+            },
+            // In the view constructor, we create a new instance of our view.
+            |_, cx| {
+                cx.new(|_| HelloWorld {
+                    text: "Hello, world!".into(),
+                })
+            },
+        )
+        .unwrap();
+        cx.activate(true);
     });
 }
 ```
-Run this now. The window will look the same, but our code is now structured with a `View` that will render our UI.
+Run this now. You'll see "Hello, world!" in the top-left corner of the window. Our code is now structured with a `View` that renders our UI.
 
-### Adding Text
+### Styling and Centering
 
-Let's make our view render some text.
+The text is a bit lonely in the corner. Let's center it and give it some style. GPUI uses a fluent, method-chaining API for styling that is inspired by Tailwind CSS.
 
 Modify the `render` method in `src/main.rs`:
 ```rust
 // ... existing code ...
-impl Render for HelloWorld {
-    fn render(&mut self, _cx: &mut ViewContext<Self>) -> impl IntoElement {
-        div()
-            // The `child` method adds a child element.
-            // The `text` element renders a string of text.
-            .child(text("Hello, GPUI!"))
-    }
-}
-// ... existing code ...
-```
-Run the app again. You'll see "Hello, GPUI!" in the top-left corner of the window.
-
-### Styling and Centering
-
-The text is a bit lonely in the corner. Let's center it and give it a color. GPUI uses a fluent, method-chaining style for styling that is inspired by Tailwind CSS.
-
-Modify the `render` method again:
-```rust
+use gpui::{
+    div, rgb, App, Application, Bounds, Context, IntoElement, ParentElement, Render,
+    SharedString, Styled, Window, WindowBounds, WindowOptions, px, size,
+};
 // ... existing code ...
 impl Render for HelloWorld {
-    fn render(&mut self, _cx: &mut ViewContext<Self>) -> impl IntoElement {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         div()
             // Use flexbox to control layout.
             .flex()
-            .justify_center() // Center horizontally
-            .items_center()   // Center vertically
-            .size_full()      // Make the div take up the full window size
-            .child(
-                text("Hello, GPUI!")
-                    // Most styling methods are available on all elements.
-                    .text_color(rgb(0xffffff)) // Set text color to white
-            )
-    }
-}
-// ... existing code ...
-```
-Now when you run the app, the text will be perfectly centered and colored white, standing out against the default dark background.
-
-### Adding an Asset
-
-GPUI applications need an `assets` directory in the project root for static files like images, fonts, and icons. Let's add the Zed logo next to our text.
-
-1.  Create an `assets/icons` directory in your project root:
-    ```sh
-    mkdir -p assets/icons
-    ```
-2.  Download the Zed logo SVG and save it as `assets/icons/logo.svg`. You can get it from the Zed repository or use a command like `curl`:
-    ```sh
-    curl -o assets/icons/logo.svg https://raw.githubusercontent.com/zed-industries/zed/main/assets/icons/logo.svg
-    ```
-
-Now, update the `render` method to include the SVG:
-```rust
-// ... existing code ...
-impl Render for HelloWorld {
-    fn render(&mut self, _cx: &mut ViewContext<Self>) -> impl IntoElement {
-        div()
-            .flex()
+            // Set a fixed size for the div.
+            .size(px(500.0))
+            // Center children horizontally and vertically.
             .justify_center()
             .items_center()
-            .size_full()
-            .gap_4() // Add some space between our children
-            .child(
-                // The `svg` element renders an SVG image from the assets directory.
-                svg()
-                    .path("icons/logo.svg")
-                    .text_color(rgb(0xffffff)) // SVGs can be colored like text
-                    .w_8() // Set width (w-8 = 2rem = 32px)
-                    .h_8(), // Set height
-            )
-            .child(
-                text("Hello, GPUI!")
-                    .text_color(rgb(0xffffff))
-            )
+            // Apply text styling.
+            .text_xl()
+            .text_color(rgb(0xffffff))
+            // Add the text as a child element.
+            .child(self.text.clone())
     }
 }
-// ... existing code ...
-```
-There's a small problem in our `main` function. The `run` closure has a typo `AppCsontext` instead of `AppContext`. Let's fix that.
-```rust
-// ... existing code ...
+
+// ... The main function remains the same ...
 fn main() {
-    App::new().run(|cx: &mut AppContext| { // Corrected from AppCsontext
-        cx.open_window(WindowOptions::default(), |cx| {
-            cx.new_view(|_cx| HelloWorld)
-        });
+    Application::new().run(|cx: &mut App| {
+        let bounds = Bounds::centered(None, size(px(500.), px(500.0)), cx);
+        cx.open_window(
+            WindowOptions {
+                window_bounds: Some(WindowBounds::Windowed(bounds)),
+                ..Default::default()
+            },
+            |_, cx| {
+                cx.new(|_| HelloWorld {
+                    text: "Hello, world!".into(),
+                })
+            },
+        )
+        .unwrap();
+        cx.activate(true);
+    });
+}
+```
+Now when you run the app, the text will be perfectly centered, larger, and colored white, standing out against the default dark background.
+
+### Run the Final Application
+
+You're all set! The final code in `src/main.rs` should look like this:
+
+```rust
+use gpui::{
+    div, rgb, App, Application, Bounds, Context, IntoElement, ParentElement, Render,
+    SharedString, Styled, Window, WindowBounds, WindowOptions, px, size,
+};
+
+struct HelloWorld {
+    text: SharedString,
+}
+
+impl Render for HelloWorld {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .flex()
+            .size(px(500.0))
+            .justify_center()
+            .items_center()
+            .text_xl()
+            .text_color(rgb(0xffffff))
+            .child(self.text.clone())
+    }
+}
+
+fn main() {
+    Application::new().run(|cx: &mut App| {
+        let bounds = Bounds::centered(None, size(px(500.), px(500.0)), cx);
+        cx.open_window(
+            WindowOptions {
+                window_bounds: Some(WindowBounds::Windowed(bounds)),
+                ..Default::default()
+            },
+            |_, cx| {
+                cx.new(|_| HelloWorld {
+                    text: "Hello, world!".into(),
+                })
+            },
+        )
+        .unwrap();
+        cx.activate(true);
     });
 }
 ```
 
-### Run the Final Application
-
-You're all set! Compile and run your application from the project root:
+Compile and run your application from the project root:
 
 ```sh
 cargo run
 ```
-
-After a few moments of compiling, you should see a window appear with the Zed logo and the text "Hello, GPUI!" centered nicely.
 
 Congratulations! You've successfully built and run your first GPUI application, starting from a blank window and progressively adding components and styling.
 
@@ -230,10 +255,10 @@ Congratulations! You've successfully built and run your first GPUI application, 
 In this chapter, you learned how to:
 - Set up a new Rust project with the GPUI dependency.
 - Install the necessary system libraries for your operating system.
-- Write a simple application that renders text and an SVG image.
+- Create a windowed application using `gpui::Application`.
+- Define and render a `View` with state.
+- Use the `div` element and styling methods to create a layout.
 - Progressively build a UI, from a blank window to a styled view.
-- Understand the roles of `App`, `Window`, `View`, and `Elements` in a GPUI application.
-- Include and use assets like SVG icons.
 
 You now have a working GPUI development environment. You've taken the first and most important step on your journey to mastering GPUI.
 
