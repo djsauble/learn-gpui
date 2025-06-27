@@ -236,5 +236,5 @@ You've taken the first and most important step on your journey to mastering GPUI
 
 ## What's Next?
 
-In **Chapter 2: Understanding the Architecture**, we will take a closer look at the core concepts of GPUI. 
+In [Chapter 2: Understanding the Architecture](./CHAPTER_02.md), we will take a closer look at the core concepts of GPUI. 
 We'll explore the rendering pipeline, contexts, and views to build a deeper understanding of how the framework operates.

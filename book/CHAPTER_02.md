@@ -1,6 +1,6 @@
 # Chapter 2: Understanding the Architecture
 
-In Chapter 1, you built your first GPUI application. Now, it's time to look under the hood. This chapter explores the fundamental architecture of GPUI, giving you a mental model of how the framework operates. Understanding these core concepts is key to building more complex and performant applications.
+In [Chapter 1](./CHAPTER_01.md), you built your first GPUI application. Now, it's time to look under the hood. This chapter explores the fundamental architecture of GPUI, giving you a mental model of how the framework operates. Understanding these core concepts is key to building more complex and performant applications.
 
 We'll dissect the roles of the application, its various contexts, and the views that power your UI. We'll also trace the path from your `render` method to the pixels on the screen, and clarify how GPUI manages layout and user interaction.
 
@@ -15,7 +15,7 @@ By the end of this chapter, you will be able to:
 
 ## Prerequisites
 
-- Completion of **Chapter 1: Getting Started**.
+- Completion of [Chapter 1: Getting Started](./CHAPTER_01.md).
 - A solid understanding of the code in the "Hello, world!" project.
 
 ## GPUI's Core Concepts
