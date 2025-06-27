@@ -99,75 +99,181 @@ cargo add gpui --git https://github.com/zed-industries/zed.git
 
 We will modify the `main` function to call `cx.open_window` twice. Each window will be created with its own instance of the `HelloWorld` view, but we'll pass different text to each one.
 
-Replace the contents of `src/main.rs` with the following code:
+Let's start with the final code from Chapter 1. This will give us a single, styled window.
 
 ```rust
 use gpui::{
-    div, App, AppContext, Application, Context, IntoElement, ParentElement, Render, SharedString,
-    Styled, Window, WindowOptions,
+    div, rgb, App, AppContext, Application, Context, IntoElement, ParentElement, Render,
+    SharedString, Styled, Window, WindowOptions,
 };
 
-// Our view struct remains the same.
 struct HelloWorld {
     text: SharedString,
 }
 
 impl Render for HelloWorld {
     fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
-        // The render logic also remains the same.
         div()
             .flex()
             .w_full()
             .h_full()
             .justify_center()
             .items_center()
+            .bg(rgb(0x2a2a2a))
+            .text_3xl()
+            .text_color(rgb(0xffff00))
             .child(self.text.clone())
     }
 }
 
 fn main() {
-    // The Application singleton is the entry point to a GPUI app.
     Application::new().run(|cx: &mut App| {
-        // --- Window 1 ---
-        // Open the first window with the default options.
         cx.open_window(
             WindowOptions::default(),
-            // The view constructor callback creates an instance of our HelloWorld view.
             |_, cx| {
                 cx.new(|_| HelloWorld {
-                    text: "Hello, from window 1!".into(),
+                    text: "Hello, world!".into(),
                 })
             },
         )
+        .unwrap();
+        cx.activate(true);
+    });
+}
+```
+
+Next, we'll customize the window's appearance. We'll add a helper function to create a `WindowOptions` struct, allowing us to set the window's title and position. This step prepares our code for managing multiple windows with distinct properties.
+
+```rust
+use gpui::{
+    bounds, div, point, px, rgb, size, App, AppContext, Application, Context, IntoElement,
+    ParentElement, Pixels, Point, Render, SharedString, Size, Styled, TitlebarOptions, Window,
+    WindowBounds, WindowOptions,
+};
+
+struct HelloWorld {
+    text: SharedString,
+}
+
+impl Render for HelloWorld {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .flex()
+            .w_full()
+            .h_full()
+            .justify_center()
+            .items_center()
+            .bg(rgb(0x2a2a2a))
+            .text_3xl()
+            .text_color(rgb(0xffff00))
+            .child(self.text.clone())
+    }
+}
+
+fn get_window_options(origin: Point<Pixels>, size: Size<Pixels>, title: String) -> WindowOptions {
+    WindowOptions {
+        titlebar: Some(TitlebarOptions {
+            title: Some(title.into()),
+            ..Default::default()
+        }),
+        window_bounds: Some(WindowBounds::Windowed(bounds(origin, size))),
+        ..Default::default()
+    }
+}
+
+fn main() {
+    Application::new().run(|cx: &mut App| {
+        let window_size = size(px(400.0), px(400.0));
+
+        let first_window_options = get_window_options(
+            point(px(0.0), px(0.0)),
+            window_size,
+            String::from("First Window"),
+        );
+
+        cx.open_window(first_window_options, |_, cx| {
+            cx.new(|_| HelloWorld {
+                text: "Hello, from window 1!".into(),
+            })
+        })
+        .unwrap();
+
+        cx.activate(true);
+    });
+}
+```
+
+Finally, let's add a second window. We'll call our `get_window_options` helper again with a different position and title, and then use `cx.open_window` a second time. This demonstrates how to manage multiple windows in a single GPUI application.
+
+```rust
+use gpui::{
+    bounds, div, point, px, rgb, size, App, AppContext, Application, Context, IntoElement,
+    ParentElement, Pixels, Point, Render, SharedString, Size, Styled, TitlebarOptions, Window,
+    WindowBounds, WindowOptions,
+};
+
+struct HelloWorld {
+    text: SharedString,
+}
+
+impl Render for HelloWorld {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .flex()
+            .w_full()
+            .h_full()
+            .justify_center()
+            .items_center()
+            .bg(rgb(0x2a2a2a))
+            .text_3xl()
+            .text_color(rgb(0xffff00))
+            .child(self.text.clone())
+    }
+}
+
+fn get_window_options(origin: Point<Pixels>, size: Size<Pixels>, title: String) -> WindowOptions {
+    WindowOptions {
+        titlebar: Some(TitlebarOptions {
+            title: Some(title.into()),
+            ..Default::default()
+        }),
+        window_bounds: Some(WindowBounds::Windowed(bounds(origin, size))),
+        ..Default::default()
+    }
+}
+
+fn main() {
+    Application::new().run(|cx: &mut App| {
+        let window_size = size(px(400.0), px(400.0));
+
+        // --- Window 1 ---
+        let first_window_options = get_window_options(
+            point(px(0.0), px(0.0)),
+            window_size,
+            String::from("First Window"),
+        );
+
+        cx.open_window(first_window_options, |_, cx| {
+            cx.new(|_| HelloWorld {
+                text: "Hello, from window 1!".into(),
+            })
+        })
         .unwrap();
 
         // --- Window 2 ---
-        // Define options for the second window to give it a different title and size.
-        let second_window_options = WindowOptions {
-            title: Some("Second Window".into()),
-            bounds: gpui::WindowBounds::Fixed(gpui::Bounds {
-                origin: gpui::Point { x: 200.0, y: 200.0 },
-                size: gpui::Size {
-                    width: 400.0,
-                    height: 200.0,
-                },
-            }),
-            ..Default::default()
-        };
+        let second_window_options = get_window_options(
+            point(px(410.0), px(0.0)),
+            window_size,
+            String::from("Second Window"),
+        );
 
-        // Open the second window using the new options.
-        cx.open_window(
-            second_window_options,
-            // This view constructor creates a second, independent HelloWorld view.
-            |_, cx| {
-                cx.new(|_| HelloWorld {
-                    text: "Greetings, from window 2!".into(),
-                })
-            },
-        )
+        cx.open_window(second_window_options, |_, cx| {
+            cx.new(|_| HelloWorld {
+                text: "Greetings, from window 2!".into(),
+            })
+        })
         .unwrap();
 
-        // Activate the app, making the windows visible and focused.
         cx.activate(true);
     });
 }
