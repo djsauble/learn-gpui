@@ -80,47 +80,67 @@ cargo add gpui --git https://github.com/zed-industries/zed.git
 
 ### Create the Profile Card Component
 
-First, ensure you have an image asset available. You can use the `app-icon.png` from the GPUI examples located at `src/crates/gpui/examples/image/app-icon.png`. For this example, we'll assume you've copied it to an `assets` directory in your project's root.
+First, ensure you have an image asset available. You can create a new file named `app-icon.svg` from the following code block.
+
+```xml app-icon.svg
+<svg width="100" height="150" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="35" r="25" fill="#fff"/>
+
+  <path d="M20 70 L20 130 L80 130 L80 70 A10 10 0 0 0 70 60 L30 60 A10 10 0 0 0 20 70 Z" fill="#fff"/>
+</svg>
+```
+
+For this example, we'll assume you've saved it to an `assets` directory in your project's root.
 
 ```
 chapter_03/
 ├── assets/
-│   └── app-icon.png
+│   └── app-icon.svg
 ├── src/
 │   └── main.rs
 └── Cargo.toml
 ```
 
-Now, let's write the code.
+Now, let's write the following code to `src/main.rs`.
 
 ```rust
-// In src/main.rs
-
 use gpui::{
-    div, img, prelude::*, App, AppContext, AssetSource, Bounds, Context, Element, Render,
-    SharedString, View, Window, WindowOptions,
+    App, AppContext, Application, AssetSource, Render, Result, SharedString, Window, WindowOptions,
+    div, prelude::*, px, rgb, svg,
 };
+use std::borrow::Cow;
+use std::fs;
+use std::path::PathBuf;
 
 // 1. Define an AssetSource for our app.
 // This tells GPUI where to find assets like images and fonts.
-struct AppAssetSource;
-impl AssetSource for AppAssetSource {
-    fn load(&self, path: &str) -> gpui::Result<std::borrow::Cow<'static, [u8]>> {
+struct Assets {
+    base: PathBuf,
+}
+
+impl AssetSource for Assets {
+    fn load(&self, path: &str) -> Result<Option<Cow<'static, [u8]>>> {
         // For this example, we'll use a simple `include_bytes!` macro
         // to bundle the asset into the binary. A real app might load
         // from the filesystem.
-        if path == "assets/app-icon.png" {
-            Ok(std::borrow::Cow::Borrowed(include_bytes!(
-                "../assets/app-icon.png"
-            )))
-        } else {
-            Err(anyhow::anyhow!("path not found: {}", path))
-        }
+        fs::read(self.base.join(path))
+            .map(|data| Some(std::borrow::Cow::Owned(data)))
+            .map_err(|err| err.into())
     }
 
     fn list(&self, path: &str) -> gpui::Result<Vec<SharedString>> {
-        // This is not needed for our simple case.
-        Ok(vec![])
+        fs::read_dir(self.base.join(path))
+            .map(|entries| {
+                entries
+                    .filter_map(|entry| {
+                        entry
+                            .ok()
+                            .and_then(|entry| entry.file_name().into_string().ok())
+                            .map(SharedString::from)
+                    })
+                    .collect()
+            })
+            .map_err(|err| err.into())
     }
 }
 
@@ -128,7 +148,7 @@ impl AssetSource for AppAssetSource {
 struct ProfileCard;
 
 impl Render for ProfileCard {
-    fn render(&mut self, _cx: &mut View<Self>) -> impl Element {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         // 3. Build the card using styled divs, an image, and text.
         div()
             // Container styling
@@ -139,16 +159,14 @@ impl Render for ProfileCard {
             .shadow_lg()
             .gap_4()
             .items_center()
-            .w(300.)
+            .w(px(300.))
             // Children
             .child(
                 // Profile picture
-                img("assets/app-icon.png")
-                    .w_20()
-                    .h_20()
-                    .rounded_full()
-                    .border_2()
-                    .border_color(rgb(0x1e90ff)),
+                svg()
+                    .path("app-icon.svg")
+                    .size_8()
+                    .text_color(rgb(0x00ff00)),
             )
             .child(
                 div()
@@ -173,12 +191,20 @@ impl Render for ProfileCard {
 }
 
 fn main() {
-    Application::new(AppAssetSource).run(|cx: &mut AppContext| {
-        cx.open_window(WindowOptions::default(), |cx| {
-            // Center the profile card in the window
-            cx.new_view(|_cx| ProfileCard)
+    println!("{}", env!("CARGO_MANIFEST_DIR"));
+    Application::new()
+        .with_assets(Assets {
+            base: PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("assets"),
+        })
+        .run(|cx: &mut App| {
+            cx.open_window(WindowOptions::default(), |_, cx| {
+                // Center the profile card in the window
+                cx.new(|_| ProfileCard)
+            })
+            .unwrap();
+
+            cx.activate(true);
         });
-    });
 }
 ```
 
